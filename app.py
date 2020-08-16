@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
@@ -20,6 +20,15 @@ class Todo(db.Model):
 
 
 db.create_all()
+
+
+@app.route('/todos/create', methods=['POST'])
+def create_todo():
+    title = request.form.get('title', '')
+    todo = Todo(title=title)
+    db.session.add(todo)
+    db.session.commit()
+    return redirect(url_for('index'))
 
 
 @app.route('/')
