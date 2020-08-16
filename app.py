@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+import sys
 
 app = Flask(__name__)
 
@@ -24,13 +25,22 @@ db.create_all()
 
 @app.route('/todos/create', methods=['POST'])
 def create_todo():
-    title = request.get_json()['title']
-    todo = Todo(title=title)
-    db.session.add(todo)
-    db.session.commit()
-    return jsonify({
-        'title': todo.title
-    })
+    error = False
+    data = {}
+    try:
+        title = request.get_json()['title']
+        todo = Todo(title=title)
+        db.session.add(todo)
+        db.session.commit()
+        data = {'title': todo.title}
+    except:
+        error = True
+        db.session.rollback()
+        print(sys.exec_info())
+    finally:
+        db.session.close()
+    if not error:
+        return jsonify(data)
 
 
 @app.route('/')
