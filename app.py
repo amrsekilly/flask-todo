@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, abort
 from flask_sqlalchemy import SQLAlchemy
 import sys
 
@@ -39,6 +39,8 @@ def create_todo():
         print(sys.exec_info())
     finally:
         db.session.close()
+    if error:
+        abort(500)
     if not error:
         return jsonify(data)
 
