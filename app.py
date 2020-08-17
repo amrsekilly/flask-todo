@@ -68,5 +68,5 @@ def update_todo(id):
 
 @app.route('/', methods=['GET', 'POST', 'PUT'])
 def index():
-    data = Todo.query.all()
+    data = Todo.query.order_by('id').all()
     return render_template('index.html', data=data)
