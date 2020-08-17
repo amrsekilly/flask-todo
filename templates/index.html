@@ -11,12 +11,33 @@
   </form>
   <h1>Todos</h1>
   <ul id="todos">
-    {% for d in data %}
-    <li>{{ d.title }}</li>
+    {% for todo in data %}
+    <li>
+      <input class="todo-completed" data-id="{{ todo.id }}" type="checkbox" {% if todo.completed %} checked
+        {% endif %} />
+      {{ todo.title }}</li>
     {% endfor %}
+    </li>
   </ul>
 
   <script>
+    document.querySelectorAll('.todo-completed')
+      .forEach(todo => {
+        todo.onchange = (e) => {
+          const id = e.target.dataset.id;
+          const checked = e.target.checked;
+          fetch(`/todos/${id}/update`, {
+            method: 'PUT',
+            body: JSON.stringify({
+              'completed': checked,
+            }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        }
+      });
+
     document.getElementById('form').onsubmit = (e) => {
       e.preventDefault();
       fetch('/todos/create', {
