@@ -66,7 +66,26 @@ def update_todo(id):
         return redirect(url_for('index'))
 
 
-@app.route('/', methods=['GET', 'POST', 'PUT'])
+@app.route('/todos/<id>', methods=['DELETE'])
+def delete_todo(id):
+    error = False
+    try:
+        todo = Todo.query.get(id)
+        print(todo)
+        Todo.query.filter_by(id=todo.id).delete()
+        db.session.commit()
+    except:
+        error = True
+        db.session.rollback()
+    finally:
+        db.session.close()
+    if error:
+        abort(500)
+    if not error:
+        return redirect(url_for('index'))
+
+
+@app.route('/', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def index():
     data = Todo.query.order_by('id').all()
     return render_template('index.html', data=data)

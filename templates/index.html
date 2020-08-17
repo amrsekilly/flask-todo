@@ -15,7 +15,9 @@
     <li>
       <input class="todo-completed" data-id="{{ todo.id }}" type="checkbox" {% if todo.completed %} checked
         {% endif %} />
-      {{ todo.title }}</li>
+      {{ todo.title }}
+      <button data-id="{{ todo.id }}" class="delete-button">X</button>
+    </li>
     {% endfor %}
     </li>
   </ul>
@@ -31,6 +33,19 @@
             body: JSON.stringify({
               'completed': checked,
             }),
+            headers: {
+              'Content-Type': 'application/json'
+            }
+          })
+        }
+      });
+
+    document.querySelectorAll('.delete-button')
+      .forEach(todo => {
+        todo.onclick = (e) => {
+          const id = e.target.dataset.id;
+          fetch(`/todos/${id}`, {
+            method: 'DELETE',
             headers: {
               'Content-Type': 'application/json'
             }
